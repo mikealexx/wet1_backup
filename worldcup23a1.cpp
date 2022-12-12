@@ -412,11 +412,15 @@ output_t<int> world_cup_t::get_top_scorer(int teamId)
 		return output_t<int>(StatusType::INVALID_INPUT);
 	}
 	if(teamId < 0) {
-		return output_t<int>(this->topScorer->getId());
+		if(this->topScorer != nullptr)
+			return output_t<int>(this->topScorer->getId());
+		return output_t<int>(StatusType::FAILURE);
 	}
 	try {
 		shared_ptr<Team> team = this->teams->findNode(teamId)->data;
-		return output_t<int>(team->getTopScorer()->getId());
+		if(team->getTopScorer() != nullptr)
+			return output_t<int>(team->getTopScorer()->getId());
+		return output_t<int>(StatusType::FAILURE);
 	}
 	catch(std::exception& e) {
 		return output_t<int>(StatusType::FAILURE);
@@ -427,7 +431,7 @@ output_t<int> world_cup_t::get_top_scorer(int teamId)
 output_t<int> world_cup_t::get_all_players_count(int teamId)
 {
 	if(teamId == 0) {
-		return output_t<int>(StatusType::FAILURE);
+		return output_t<int>(StatusType::INVALID_INPUT);
 	}
 	if(teamId < 0) {
 		return this->playersById->getSize();
